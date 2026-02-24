@@ -47,6 +47,25 @@ a:hover{color:var(--text)}
 .perf-card .meta strong{color:var(--text);font-weight:400}
 .perf-card .badge{display:inline-block;padding:0.15rem 0.5rem;border:1px solid var(--gold-dim);color:var(--gold);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;margin-top:0.8rem}
 
+/* Ticket overlay */
+.ticket-overlay{margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:0.8rem;flex-wrap:wrap}
+.ticket-avail{display:flex;align-items:center;gap:0.4rem;font-size:0.7rem;letter-spacing:0.05em}
+.avail-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.avail-dot.high{background:#27ae60;box-shadow:0 0 6px rgba(39,174,96,0.5)}
+.avail-dot.medium{background:#f39c12;box-shadow:0 0 6px rgba(243,156,18,0.5)}
+.avail-dot.low{background:#e74c3c;box-shadow:0 0 6px rgba(231,76,60,0.5)}
+.avail-dot.sold-out{background:#555;box-shadow:none}
+.avail-label{color:var(--text-dim)}
+.avail-label.sold-out{color:#e74c3c;font-weight:600;text-transform:uppercase;letter-spacing:0.1em}
+.ticket-price{font-size:0.7rem;color:var(--gold);letter-spacing:0.05em}
+.ticket-link{font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.3rem 0.7rem;border:1px solid var(--gold-dim);border-radius:2px;color:var(--gold);transition:all 0.3s;cursor:pointer;text-decoration:none;white-space:nowrap}
+.ticket-link:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.ticket-link.sold-out{border-color:#555;color:#555;cursor:default}
+.ticket-link.sold-out:hover{background:transparent;color:#555}
+.price-bar{display:flex;gap:2px;margin-top:0.3rem}
+.price-seg{width:18px;height:4px;border-radius:1px;background:var(--border)}
+.price-seg.filled{background:var(--gold)}
+
 /* Calendar */
 .calendar{margin-bottom:2.5rem}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
@@ -149,12 +168,12 @@ const COMPANIES = {
 };
 
 const PERFORMANCES = [
-  {company:'opera',title:'Tosca',composer:'Giacomo Puccini',time:'7:30 PM',venue:'Metropolitan Opera House',conductor:'Yannick Nézet-Séguin',starring:'Sonya Yoncheva, Brian Jagde',badge:'Revival Opening'},
-  {company:'opera',title:'La Bohème',composer:'Giacomo Puccini',time:'8:00 PM',venue:'Metropolitan Opera House',conductor:'Marco Armiliato',starring:'Angel Blue, Jonathan Tetelman',badge:''},
-  {company:'ballet',title:'Jewels',composer:'Fauré / Stravinsky / Tchaikovsky',time:'7:00 PM',venue:'David H. Koch Theater',conductor:'Andrews Sill',starring:'Unity Phelan, Tiler Peck',badge:'Season Première'},
-  {company:'philharmonic',title:'Beethoven\'s Ninth',composer:'Ludwig van Beethoven',time:'7:30 PM',venue:'David Geffen Hall',conductor:'Gustavo Dudamel',starring:'Westminster Symphonic Choir',badge:'Sold Out'},
-  {company:'jazz',title:'Wynton Marsalis Quintet',composer:'',time:'8:00 PM',venue:'Rose Theater',conductor:'',starring:'Wynton Marsalis',badge:''},
-  {company:'theater',title:'McNeal',composer:'Ayad Akhtar',time:'8:00 PM',venue:'Vivian Beaumont Theater',conductor:'',starring:'Robert Downey Jr.',badge:'Extended Run'}
+  {company:'opera',title:'Tosca',composer:'Giacomo Puccini',time:'7:30 PM',venue:'Metropolitan Opera House',conductor:'Yannick Nézet-Séguin',starring:'Sonya Yoncheva, Brian Jagde',badge:'Revival Opening',availability:'medium',priceRange:[35,350],priceLevel:4,ticketUrl:'https://www.metopera.org/season/2025-26-season/tosca/'},
+  {company:'opera',title:'La Bohème',composer:'Giacomo Puccini',time:'8:00 PM',venue:'Metropolitan Opera House',conductor:'Marco Armiliato',starring:'Angel Blue, Jonathan Tetelman',badge:'',availability:'high',priceRange:[25,295],priceLevel:3,ticketUrl:'https://www.metopera.org/season/2025-26-season/la-boheme/'},
+  {company:'ballet',title:'Jewels',composer:'Fauré / Stravinsky / Tchaikovsky',time:'7:00 PM',venue:'David H. Koch Theater',conductor:'Andrews Sill',starring:'Unity Phelan, Tiler Peck',badge:'Season Première',availability:'low',priceRange:[35,195],priceLevel:3,ticketUrl:'https://www.nycballet.com/season-and-tickets/'},
+  {company:'philharmonic',title:'Beethoven\'s Ninth',composer:'Ludwig van Beethoven',time:'7:30 PM',venue:'David Geffen Hall',conductor:'Gustavo Dudamel',starring:'Westminster Symphonic Choir',badge:'Sold Out',availability:'sold-out',priceRange:[40,250],priceLevel:3,ticketUrl:'https://nyphil.org/concerts-tickets'},
+  {company:'jazz',title:'Wynton Marsalis Quintet',composer:'',time:'8:00 PM',venue:'Rose Theater',conductor:'',starring:'Wynton Marsalis',badge:'',availability:'medium',priceRange:[40,150],priceLevel:2,ticketUrl:'https://jazz.org/concerts-events/'},
+  {company:'theater',title:'McNeal',composer:'Ayad Akhtar',time:'8:00 PM',venue:'Vivian Beaumont Theater',conductor:'',starring:'Robert Downey Jr.',badge:'Extended Run',availability:'low',priceRange:[89,249],priceLevel:3,ticketUrl:'https://www.lct.org/shows/mcneal/'}
 ];
 
 const WEEK_EVENTS = [
@@ -195,6 +214,27 @@ const VENUES = [
   {name:'Damrosch Park',capacity:'Open Air',notes:'Summer festival & outdoor stage.'}
 ];
 
+// Ticket overlay renderer
+const AVAIL_LABELS = {high:'Available',medium:'Limited',low:'Few Left','sold-out':'Sold Out'};
+function renderTicketOverlay(p) {
+  if (!p.availability) return '';
+  const isSoldOut = p.availability === 'sold-out';
+  const dotClass = p.availability;
+  const label = AVAIL_LABELS[p.availability] || 'Unknown';
+  const priceStr = p.priceRange ? `$${p.priceRange[0]}–$${p.priceRange[1]}` : '';
+  const priceBars = Array.from({length:5},(_,i)=>`<div class="price-seg${i<(p.priceLevel||0)?' filled':''}"></div>`).join('');
+  const linkHtml = p.ticketUrl
+    ? `<a href="${p.ticketUrl}" target="_blank" rel="noopener" class="ticket-link${isSoldOut?' sold-out':''}">${isSoldOut?'Waitlist':'Tickets'}</a>`
+    : '';
+  return `<div class="ticket-overlay">
+    <div>
+      <div class="ticket-avail"><div class="avail-dot ${dotClass}"></div><span class="avail-label${isSoldOut?' sold-out':''}">${label}</span></div>
+      ${priceStr?`<div class="ticket-price">${priceStr}<div class="price-bar">${priceBars}</div></div>`:''}
+    </div>
+    ${linkHtml}
+  </div>`;
+}
+
 // Render
 const now = new Date();
 document.getElementById('dateline').textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
@@ -218,6 +258,7 @@ function render() {
         ${p.starring?`Featuring: ${p.starring}`:''}
       </div>
       ${p.badge?`<div class="badge">${p.badge}</div>`:''}
+      ${renderTicketOverlay(p)}
     </div>`;
   });
 
@@ -332,6 +373,7 @@ function renderLiveGrid() {
         ${e.time ? `${e.time} · ` : ''}${e.venue}
       </div>
       ${e.badge ? `<div class="badge">${e.badge}</div>` : ''}
+      ${e.ticketUrl ? `<div class="ticket-overlay"><div class="ticket-avail"><div class="avail-dot high"></div><span class="avail-label">View Details</span></div><a href="${e.url || e.ticketUrl}" target="_blank" rel="noopener" class="ticket-link">Tickets</a></div>` : ''}
       <div style="margin-top:0.6rem;font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold-dim)">● Live</div>
     </div>`;
   });
