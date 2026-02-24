@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CurtainCall — Lincoln Center Performance Tracker</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a25;--border:#2a2a3a;--gold:#c9a84c;--gold-dim:#8a7535;--text:#e8e6e3;--text-dim:#8a8a9a;--accent-opera:#c0392b;--accent-ballet:#8e44ad;--accent-philharmonic:#2980b9;--accent-theater:#27ae60;--accent-jazz:#e67e22;--accent-film:#1abc9c}
+html{font-size:16px}
+body{font-family:'Georgia','Times New Roman',serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+a:hover{color:var(--text)}
+
+/* Header */
+.header{text-align:center;padding:3rem 1.5rem 2rem;border-bottom:1px solid var(--border)}
+.header h1{font-size:2.4rem;font-weight:400;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:0.3rem}
+.header .subtitle{font-size:0.85rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--text-dim)}
+.header .dateline{font-size:0.75rem;color:var(--text-dim);margin-top:0.8rem;font-style:italic}
+
+/* Nav */
+.nav{display:flex;justify-content:center;gap:0.25rem;padding:1rem 1rem;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--surface)}
+.nav-btn{padding:0.5rem 1rem;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:inherit;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all 0.3s}
+.nav-btn:hover,.nav-btn.active{color:var(--gold);border-color:var(--gold)}
+
+/* Stats bar */
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.stat{background:var(--surface);padding:1.2rem;text-align:center}
+.stat .num{font-size:1.8rem;color:var(--gold);font-weight:300}
+.stat .label{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);margin-top:0.3rem}
+
+/* Main grid */
+.main{max-width:1200px;margin:0 auto;padding:1.5rem}
+
+/* Tonight section */
+.tonight{margin-bottom:2.5rem}
+.section-title{font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.tonight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+
+/* Performance card */
+.perf-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:1.5rem;transition:border-color 0.3s;position:relative;overflow:hidden}
+.perf-card:hover{border-color:var(--gold-dim)}
+.perf-card .company-tag{position:absolute;top:0;left:0;width:4px;height:100%}
+.perf-card .company-name{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.5rem}
+.perf-card .title{font-size:1.15rem;margin-bottom:0.4rem;line-height:1.3}
+.perf-card .meta{font-size:0.8rem;color:var(--text-dim);line-height:1.6}
+.perf-card .meta strong{color:var(--text);font-weight:400}
+.perf-card .badge{display:inline-block;padding:0.15rem 0.5rem;border:1px solid var(--gold-dim);color:var(--gold);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;margin-top:0.8rem}
+
+/* Calendar */
+.calendar{margin-bottom:2.5rem}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.cal-head{background:var(--surface2);padding:0.6rem;text-align:center;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim)}
+.cal-day{background:var(--surface);padding:0.5rem;min-height:80px;font-size:0.75rem;color:var(--text-dim)}
+.cal-day .day-num{font-size:0.8rem;color:var(--text);margin-bottom:0.3rem}
+.cal-day.today .day-num{color:var(--gold);font-weight:700}
+.cal-event{font-size:0.6rem;padding:1px 3px;margin-bottom:2px;border-radius:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
+
+/* Recommendations */
+.recs{margin-bottom:2.5rem}
+.rec-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:1.2rem;margin-bottom:0.8rem;display:flex;gap:1.2rem;align-items:flex-start}
+.rec-rank{font-size:1.8rem;color:var(--gold);font-weight:300;min-width:2rem;text-align:center}
+.rec-info .title{font-size:1rem;margin-bottom:0.3rem}
+.rec-info .meta{font-size:0.78rem;color:var(--text-dim);line-height:1.5}
+.rec-info .reason{font-size:0.75rem;color:var(--gold-dim);margin-top:0.5rem;font-style:italic}
+
+/* Venue list */
+.venues{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:2rem}
+.venue-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:1.2rem}
+.venue-card h3{font-size:0.9rem;font-weight:400;margin-bottom:0.5rem}
+.venue-card .venue-meta{font-size:0.75rem;color:var(--text-dim);line-height:1.6}
+
+/* Footer */
+.footer{text-align:center;padding:2rem;border-top:1px solid var(--border);font-size:0.7rem;color:var(--text-dim);letter-spacing:0.1em}
+
+/* Responsive iPad */
+@media(min-width:768px)and(max-width:1024px){
+  .tonight-grid{grid-template-columns:repeat(2,1fr)}
+  .main{padding:2rem}
+}
+@media(max-width:600px){
+  .header h1{font-size:1.6rem}
+  .tonight-grid{grid-template-columns:1fr}
+  .cal-grid{grid-template-columns:repeat(7,1fr)}
+  .cal-day{min-height:50px;padding:0.3rem}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CurtainCall</h1>
+  <div class="subtitle">Lincoln Center Performance Tracker</div>
+  <div class="dateline" id="dateline"></div>
+</div>
+
+<nav class="nav" id="nav">
+  <button class="nav-btn active" data-filter="all">All Companies</button>
+  <button class="nav-btn" data-filter="opera">Met Opera</button>
+  <button class="nav-btn" data-filter="ballet">NYC Ballet</button>
+  <button class="nav-btn" data-filter="philharmonic">NY Philharmonic</button>
+  <button class="nav-btn" data-filter="theater">LCT</button>
+  <button class="nav-btn" data-filter="jazz">Jazz at LC</button>
+  <button class="nav-btn" data-filter="film">Film at LC</button>
+</nav>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat"><div class="num" id="statTonight">6</div><div class="label">Tonight</div></div>
+  <div class="stat"><div class="num" id="statWeek">31</div><div class="label">This Week</div></div>
+  <div class="stat"><div class="num" id="statCompanies">6</div><div class="label">Companies</div></div>
+  <div class="stat"><div class="num" id="statVenues">12</div><div class="label">Venues</div></div>
+  <div class="stat"><div class="num" id="statPremiere">3</div><div class="label">Premières</div></div>
+</div>
+
+<div class="main">
+
+  <div class="tonight" id="tonightSection">
+    <div class="section-title">Tonight at Lincoln Center</div>
+    <div class="tonight-grid" id="tonightGrid"></div>
+  </div>
+
+  <div class="recs" id="recsSection">
+    <div class="section-title">Editor's Picks — This Week</div>
+    <div id="recsGrid"></div>
+  </div>
+
+  <div class="calendar" id="calSection">
+    <div class="section-title">February 2026</div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+
+  <div class="section-title">Resident Companies & Venues</div>
+  <div class="venues" id="venuesGrid"></div>
+
+</div>
+
+<div class="footer">
+  CurtainCall &mdash; An elegant companion for Lincoln Center &mdash; Updated in real time
+</div>
+
+<script>
+const COMPANIES = {
+  opera: {name:'Metropolitan Opera',color:'#c0392b',venue:'Metropolitan Opera House'},
+  ballet: {name:'New York City Ballet',color:'#8e44ad',venue:'David H. Koch Theater'},
+  philharmonic: {name:'New York Philharmonic',color:'#2980b9',venue:'David Geffen Hall'},
+  theater: {name:'Lincoln Center Theater',color:'#27ae60',venue:'Vivian Beaumont Theater'},
+  jazz: {name:'Jazz at Lincoln Center',color:'#e67e22',venue:'Rose Theater / Appel Room'},
+  film: {name:'Film at Lincoln Center',color:'#1abc9c',venue:'Walter Reade Theater / Elinor Bunin Munroe Film Center'}
+};
+
+const PERFORMANCES = [
+  {company:'opera',title:'Tosca',composer:'Giacomo Puccini',time:'7:30 PM',venue:'Metropolitan Opera House',conductor:'Yannick Nézet-Séguin',starring:'Sonya Yoncheva, Brian Jagde',badge:'Revival Opening'},
+  {company:'opera',title:'La Bohème',composer:'Giacomo Puccini',time:'8:00 PM',venue:'Metropolitan Opera House',conductor:'Marco Armiliato',starring:'Angel Blue, Jonathan Tetelman',badge:''},
+  {company:'ballet',title:'Jewels',composer:'Fauré / Stravinsky / Tchaikovsky',time:'7:00 PM',venue:'David H. Koch Theater',conductor:'Andrews Sill',starring:'Unity Phelan, Tiler Peck',badge:'Season Première'},
+  {company:'philharmonic',title:'Beethoven\'s Ninth',composer:'Ludwig van Beethoven',time:'7:30 PM',venue:'David Geffen Hall',conductor:'Gustavo Dudamel',starring:'Westminster Symphonic Choir',badge:'Sold Out'},
+  {company:'jazz',title:'Wynton Marsalis Quintet',composer:'',time:'8:00 PM',venue:'Rose Theater',conductor:'',starring:'Wynton Marsalis',badge:''},
+  {company:'theater',title:'McNeal',composer:'Ayad Akhtar',time:'8:00 PM',venue:'Vivian Beaumont Theater',conductor:'',starring:'Robert Downey Jr.',badge:'Extended Run'}
+];
+
+const WEEK_EVENTS = [
+  {company:'opera',title:'Aida',day:24},{company:'opera',title:'Tosca',day:24},{company:'ballet',title:'Jewels',day:24},
+  {company:'philharmonic',title:'Beethoven 9',day:24},{company:'jazz',title:'Marsalis',day:24},{company:'theater',title:'McNeal',day:24},
+  {company:'opera',title:'La Bohème',day:25},{company:'ballet',title:'Jewels',day:25},{company:'philharmonic',title:'Beethoven 9',day:25},
+  {company:'jazz',title:'Cécile McLorin',day:25},{company:'film',title:'Varda Retro.',day:25},
+  {company:'opera',title:'Tosca',day:26},{company:'ballet',title:'Jewels',day:26},{company:'theater',title:'McNeal',day:26},
+  {company:'opera',title:'Don Giovanni',day:26},{company:'jazz',title:'Big Band',day:26},
+  {company:'opera',title:'La Bohème',day:27},{company:'philharmonic',title:'Mahler 5',day:27},{company:'theater',title:'McNeal',day:27},
+  {company:'ballet',title:'Serenade',day:27},{company:'film',title:'Kubrick 2001',day:27},
+  {company:'opera',title:'Aida',day:28},{company:'ballet',title:'Serenade',day:28},{company:'philharmonic',title:'Mahler 5',day:28},
+  {company:'opera',title:'Tosca',day:28},{company:'jazz',title:'Afro-Cuban',day:28},{company:'theater',title:'McNeal',day:28},
+  {company:'opera',title:'Don Giovanni (Mat.)',day:1},{company:'ballet',title:'Jewels (Mat.)',day:1},
+  {company:'philharmonic',title:'Mahler 5',day:1},{company:'jazz',title:'Sunday Brunch',day:1},{company:'film',title:'New Directors',day:1}
+];
+
+const RECS = [
+  {rank:1,company:'philharmonic',title:'Beethoven\'s Ninth Symphony',meta:'David Geffen Hall · Tue–Sat · Gustavo Dudamel conducting',reason:'Dudamel\'s first Beethoven cycle as Music Director — a landmark. Expect electricity.'},
+  {rank:2,company:'ballet',title:'Jewels (Balanchine)',meta:'Koch Theater · Tue–Sun · Unity Phelan in Diamonds',reason:'The triptych that defined plotless ballet. Phelan\'s Diamonds is not to be missed this season.'},
+  {rank:3,company:'opera',title:'Tosca — Revival Opening',meta:'Met Opera House · Tonight 7:30 PM · Yoncheva, Jagde',reason:'Sonya Yoncheva owns this role. Zeffirelli\'s production remains breathtaking after 40 years.'},
+  {rank:4,company:'theater',title:'McNeal',meta:'Vivian Beaumont · Tue–Sun · Robert Downey Jr.',reason:'Ayad Akhtar\'s AI thriller with Downey in his Broadway debut. Extended through March.'},
+  {rank:5,company:'jazz',title:'Wynton Marsalis Quintet',meta:'Rose Theater · Tonight 8:00 PM',reason:'Marsalis at home in the house he built. Intimate, virtuosic, unrepeatable.'}
+];
+
+const VENUES = [
+  {name:'Metropolitan Opera House',capacity:'3,800',notes:'Largest venue on campus. Home to Met Opera & ABT.'},
+  {name:'David Geffen Hall',capacity:'2,200',notes:'Renovated 2022. Home of NY Philharmonic.'},
+  {name:'David H. Koch Theater',capacity:'2,586',notes:'Home of NYC Ballet. Balanchine\'s house.'},
+  {name:'Vivian Beaumont Theater',capacity:'1,080',notes:'Lincoln Center Theater\'s main stage.'},
+  {name:'Mitzi E. Newhouse Theater',capacity:'299',notes:'LCT\'s intimate Off-Broadway space.'},
+  {name:'Rose Theater',capacity:'1,233',notes:'Jazz at Lincoln Center\'s concert hall.'},
+  {name:'The Appel Room',capacity:'483',notes:'Glass-walled venue with Central Park views.'},
+  {name:'Dizzy\'s Club',capacity:'140',notes:'Intimate jazz club, nightly sets.'},
+  {name:'Alice Tully Hall',capacity:'1,086',notes:'Chamber Music Society & Film at LC.'},
+  {name:'Walter Reade Theater',capacity:'268',notes:'Film at Lincoln Center screenings.'},
+  {name:'Clark Studio Theater',capacity:'120',notes:'Experimental & workshop performances.'},
+  {name:'Damrosch Park',capacity:'Open Air',notes:'Summer festival & outdoor stage.'}
+];
+
+// Render
+const now = new Date();
+document.getElementById('dateline').textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+let activeFilter = 'all';
+
+function render() {
+  // Tonight
+  const grid = document.getElementById('tonightGrid');
+  grid.innerHTML = '';
+  PERFORMANCES.filter(p => activeFilter==='all' || p.company===activeFilter).forEach(p => {
+    const c = COMPANIES[p.company];
+    grid.innerHTML += `<div class="perf-card">
+      <div class="company-tag" style="background:${c.color}"></div>
+      <div class="company-name">${c.name}</div>
+      <div class="title">${p.title}</div>
+      <div class="meta">
+        ${p.composer?`<strong>${p.composer}</strong><br>`:''}
+        ${p.time} · ${p.venue}<br>
+        ${p.conductor?`Conductor: ${p.conductor}<br>`:''}
+        ${p.starring?`Featuring: ${p.starring}`:''}
+      </div>
+      ${p.badge?`<div class="badge">${p.badge}</div>`:''}
+    </div>`;
+  });
+
+  // Recs
+  const rg = document.getElementById('recsGrid');
+  rg.innerHTML = '';
+  RECS.filter(r => activeFilter==='all' || r.company===activeFilter).forEach(r => {
+    rg.innerHTML += `<div class="rec-card">
+      <div class="rec-rank">${r.rank}</div>
+      <div class="rec-info">
+        <div class="title">${r.title}</div>
+        <div class="meta">${r.meta}</div>
+        <div class="reason">${r.reason}</div>
+      </div>
+    </div>`;
+  });
+}
+
+// Calendar
+function renderCalendar() {
+  const cg = document.getElementById('calGrid');
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  days.forEach(d => cg.innerHTML += `<div class="cal-head">${d}</div>`);
+  // Feb 2026 starts on Sunday
+  const startDay = 0; // Sunday
+  for(let i=0;i<startDay;i++) cg.innerHTML += `<div class="cal-day"></div>`;
+  for(let d=1;d<=28;d++){
+    const isToday = d===24;
+    const evts = WEEK_EVENTS.filter(e=>e.day===d && (activeFilter==='all'||e.company===activeFilter));
+    let evtHtml = evts.slice(0,3).map(e=>`<div class="cal-event" style="background:${COMPANIES[e.company].color}">${e.title}</div>`).join('');
+    if(evts.length>3) evtHtml += `<div style="font-size:0.55rem;color:var(--text-dim)">+${evts.length-3} more</div>`;
+    cg.innerHTML += `<div class="cal-day${isToday?' today':''}"><div class="day-num">${d}</div>${evtHtml}</div>`;
+  }
+}
+
+// Venues
+function renderVenues() {
+  const vg = document.getElementById('venuesGrid');
+  VENUES.forEach(v => {
+    vg.innerHTML += `<div class="venue-card"><h3>${v.name}</h3><div class="venue-meta">Capacity: ${v.capacity}<br>${v.notes}</div></div>`;
+  });
+}
+
+// Nav
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    document.getElementById('tonightGrid').innerHTML = '';
+    document.getElementById('recsGrid').innerHTML = '';
+    document.getElementById('calGrid').innerHTML = '';
+    render();
+    renderCalendar();
+  });
+});
+
+render();
+renderCalendar();
+renderVenues();
+</script>
+</body>
+</html>
