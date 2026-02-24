@@ -97,11 +97,32 @@ a:hover{color:var(--text)}
   .tonight-grid{grid-template-columns:repeat(2,1fr)}
   .main{padding:2rem}
 }
+/* Artists */
+.artists-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.artist-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;transition:border-color 0.3s;cursor:pointer}
+.artist-card:hover{border-color:var(--gold-dim)}
+.artist-header{display:flex;align-items:center;gap:1rem;padding:1.2rem}
+.artist-avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:300;color:#fff;letter-spacing:0.05em;text-transform:uppercase}
+.artist-info{flex:1;min-width:0}
+.artist-name{font-size:1rem;margin-bottom:0.2rem}
+.artist-role{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim)}
+.artist-company{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;margin-top:0.15rem}
+.artist-expand{font-size:0.7rem;color:var(--gold-dim);transition:transform 0.3s;margin-left:auto;padding:0.3rem}
+.artist-card.open .artist-expand{transform:rotate(180deg)}
+.artist-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
+.artist-card.open .artist-body{max-height:400px}
+.artist-bio{padding:0 1.2rem 1rem;font-size:0.82rem;line-height:1.7;color:var(--text-dim);border-top:1px solid var(--border);padding-top:1rem;margin-top:0}
+.artist-appearances{padding:0 1.2rem 1.2rem}
+.artist-appearances .section-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:0.4rem}
+.appearance-item{font-size:0.75rem;color:var(--text);padding:0.25rem 0;display:flex;justify-content:space-between}
+.appearance-item .date{color:var(--text-dim);font-size:0.7rem}
+
 @media(max-width:600px){
   .header h1{font-size:1.6rem}
   .tonight-grid{grid-template-columns:1fr}
   .cal-grid{grid-template-columns:repeat(7,1fr)}
   .cal-day{min-height:50px;padding:0.3rem}
+  .artists-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -148,6 +169,11 @@ a:hover{color:var(--text)}
     <div class="cal-grid" id="calGrid"></div>
   </div>
 
+  <div class="section-title">Featured Artists</div>
+  <div class="artists-grid" id="artistsGrid"></div>
+  </div>
+
+  <div style="margin-bottom:2.5rem">
   <div class="section-title">Resident Companies & Venues</div>
   <div class="venues" id="venuesGrid"></div>
 
@@ -394,12 +420,83 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     render();
     renderCalendar();
     renderLiveGrid();
+    renderArtists();
   });
 });
+
+// === Artists Data ===
+const ARTISTS = [
+  {name:'Yannick Nézet-Séguin',role:'Music Director',company:'opera',initials:'YN',
+   bio:'Principal conductor and artistic visionary of the Metropolitan Opera since 2018. Also serves as Music Director of the Philadelphia Orchestra and Orchestre Métropolitain de Montréal. Known for electrifying interpretations and deep collaborative relationships with singers.',
+   appearances:[{title:'Andrea Chénier',date:'Feb 25–Mar 14'},{title:'Tosca',date:'Mar 20–Apr 5'}]},
+  {name:'Gustavo Dudamel',role:'Music Director',company:'philharmonic',initials:'GD',
+   bio:'Appointed Music & Artistic Director of the New York Philharmonic in 2026. The Venezuelan maestro, formerly of the LA Phil, is celebrated for his passionate conducting style and commitment to music education through El Sistema.',
+   appearances:[{title:'Beethoven & Bartók',date:'Feb 26–28'},{title:'Mahler Symphony No. 2',date:'Mar 5–7'}]},
+  {name:'Jonathan Tines',role:'Bass-Baritone',company:'opera',initials:'JT',
+   bio:'Rising star bass-baritone acclaimed for his powerful stage presence and rich vocal tone. A champion of contemporary opera, he has premiered works at major houses across the country.',
+   appearances:[{title:'The Amazing Adventures of Kavalier & Clay',date:'Feb–Mar 2026'}]},
+  {name:'Wendy Whelan',role:'Associate Artistic Director',company:'ballet',initials:'WW',
+   bio:'Legendary former principal dancer of NYCB who performed with the company for three decades. Now serves as Associate Artistic Director, shaping the next generation of ballet while championing new choreographic voices.',
+   appearances:[{title:'Winter Season Curation',date:'Jan–Feb 2026'},{title:'New Choreographers Showcase',date:'Mar 2026'}]},
+  {name:'Wynton Marsalis',role:'Managing & Artistic Director',company:'jazz',initials:'WM',
+   bio:'Nine-time Grammy winner and Pulitzer Prize recipient who co-founded Jazz at Lincoln Center. A trumpet virtuoso and prolific composer, Marsalis has been the leading ambassador for jazz music worldwide for four decades.',
+   appearances:[{title:'Big Band Holidays Encore',date:'Feb 22'},{title:'Essentially Ellington',date:'May 2026'}]},
+  {name:'Angel Blue',role:'Soprano',company:'opera',initials:'AB',
+   bio:'Grammy-winning soprano praised for her luminous voice and commanding dramatic interpretations. A former Miss Hollywood, she has become one of the most sought-after sopranos on the international opera circuit.',
+   appearances:[{title:'Aida',date:'Mar 2026'},{title:'Porgy and Bess (Concert)',date:'Apr 2026'}]},
+  {name:'Justin Peck',role:'Resident Choreographer',company:'ballet',initials:'JP',
+   bio:'Appointed NYCB\'s youngest Resident Choreographer in 2014 at age 27. Known for his athletic, musical choreography that honors Balanchine tradition while pushing boldly into the contemporary. Also choreographed the Broadway revival of West Side Story.',
+   appearances:[{title:'New Peck Ballet (World Premiere)',date:'Spring 2026'},{title:'Partita',date:'Feb 2026'}]},
+  {name:'Daniil Trifonov',role:'Pianist',company:'philharmonic',initials:'DT',
+   bio:'Russian-born virtuoso pianist widely regarded as one of the greatest of his generation. Grammy winner known for technically dazzling yet deeply poetic performances. A frequent soloist with the world\'s leading orchestras.',
+   appearances:[{title:'Rachmaninoff Piano Concerto No. 3',date:'Mar 12–14'},{title:'Solo Recital',date:'Apr 2026'}]},
+  {name:'Lileana Blain-Cruz',role:'Resident Director',company:'theater',initials:'LB',
+   bio:'Tony-nominated director and LCT\'s Resident Director. Acclaimed for visceral, inventive stagings that blend classical text with bold visual storytelling. Her work spans Broadway, Off-Broadway, and opera.',
+   appearances:[{title:'The Ally',date:'Feb–Mar 2026'},{title:'New Commission TBA',date:'Spring 2026'}]},
+  {name:'Dennis Lim',role:'Artistic Director',company:'film',initials:'DL',
+   bio:'Artistic Director of the New York Film Festival and Director of Programming at Film at Lincoln Center. Former critic and editor at the LA Times, Village Voice, and Cinema Scope. Shapes one of the world\'s most prestigious film festivals.',
+   appearances:[{title:'New Directors/New Films',date:'Mar 2026'},{title:'Art of the Real',date:'Apr 2026'}]},
+  {name:'Sondra Radvanovsky',role:'Soprano',company:'opera',initials:'SR',
+   bio:'Canadian dramatic soprano renowned as the reigning queen of Verdi and bel canto. Made history performing all three Donizetti Tudor Queens in a single Met season. Known for her soaring high notes and fearless dramatic commitment.',
+   appearances:[{title:'Il Trovatore',date:'Mar 2026'}]},
+  {name:'Tiler Peck',role:'Principal Dancer',company:'ballet',initials:'TP',
+   bio:'One of NYCB\'s most celebrated principal dancers, known for her extraordinary musicality, speed, and precision. Also a choreographer and Broadway performer who bridges the worlds of classical and contemporary dance.',
+   appearances:[{title:'Balanchine\'s Jewels',date:'Feb 2026'},{title:'Spring Gala',date:'May 2026'}]}
+];
+
+function renderArtists() {
+  const grid = document.getElementById('artistsGrid');
+  grid.innerHTML = '';
+  ARTISTS.filter(a => activeFilter === 'all' || a.company === activeFilter).forEach(a => {
+    const c = COMPANIES[a.company];
+    const appsHtml = a.appearances.map(ap =>
+      `<div class="appearance-item"><span>${ap.title}</span><span class="date">${ap.date}</span></div>`
+    ).join('');
+    grid.innerHTML += `<div class="artist-card" onclick="this.classList.toggle('open')">
+      <div class="artist-header">
+        <div class="artist-avatar" style="background:${c.color}">${a.initials}</div>
+        <div class="artist-info">
+          <div class="artist-name">${a.name}</div>
+          <div class="artist-role">${a.role}</div>
+          <div class="artist-company" style="color:${c.color}">${c.name}</div>
+        </div>
+        <div class="artist-expand">▼</div>
+      </div>
+      <div class="artist-body">
+        <div class="artist-bio">${a.bio}</div>
+        <div class="artist-appearances">
+          <div class="section-label">Upcoming Appearances</div>
+          ${appsHtml}
+        </div>
+      </div>
+    </div>`;
+  });
+}
 
 render();
 renderCalendar();
 renderVenues();
+renderArtists();
 loadLiveData();
 </script>
 </body>
