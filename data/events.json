@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-04-05T13:06:50.573Z",
-  "eventCount": 0,
+  "lastUpdated": "2026-04-05T18:51:49.385Z",
+  "eventCount": 18,
   "sources": {
     "metopera": {
-      "count": 0,
+      "count": 18,
       "url": "https://www.metopera.org/season/2025-26-season/"
     },
     "jalc": {
@@ -30,5 +30,186 @@
       "note": "No public API found"
     }
   },
-  "events": []
+  "events": [
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "The Amazing Adventures of Kavalier & Clay",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/the-amazing-adventures-of-kavalier--clay/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Andrea Chénier",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/andrea-chenier/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Arabella",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/arabella/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "La Bohème",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/la-boheme/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Carmen",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/carmen/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Don Giovanni",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/don-giovanni/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Eugene Onegin",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/eugene-onegin/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "La Fille du Régiment",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/la-fille-du-regiment/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Innocence",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/innocence/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Madama Butterfly",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/madama-butterfly/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "The Magic Flute",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/the-magic-flute/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Porgy and Bess",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/porgy-and-bess/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "I Puritani",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/i-puritani/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "La Sonnambula",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/la-sonnambula/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "La Traviata",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/la-traviata/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Tristan und Isolde",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/tristan-und-isolde/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "Turandot",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/turandot/",
+      "badge": ""
+    },
+    {
+      "source": "metopera",
+      "company": "opera",
+      "title": "El Último Sueño de Frida y Diego",
+      "date": "",
+      "time": "",
+      "venue": "Metropolitan Opera House",
+      "url": "https://www.metopera.org/season/2025-26-season/el-ultimo-sueno-de-frida-y-diego/",
+      "badge": ""
+    }
+  ]
 }
